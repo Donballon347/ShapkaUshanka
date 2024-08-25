@@ -1,0 +1,62 @@
+/* Стили для контейнера чата */
+#chat {
+    width: 100%;
+    max-width: 500px;
+    height: 700px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 20px auto;
+    overflow-y: scroll;
+    background-color: #f9f9f9;
+}
+
+/* Стили для сообщений */
+.message {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 80%;
+}
+
+/* Стили для сообщений пользователя */
+.user {
+    background-color: #d1e7ff;
+    color: #0a58ca;
+    text-align: right;
+    margin-left: auto;
+}
+
+/* Стили для сообщений бота */
+.bot {
+    background-color: #e2e3e5;
+    color: #495057;
+    text-align: left;
+    margin-right: auto;
+}
+
+/* Стили для кнопки отправки */
+button {
+    display: block;
+    width: 100%;
+    max-width: 100px;
+    margin: 10px auto;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для поля ввода */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
