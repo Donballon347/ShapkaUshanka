@@ -123,5 +123,23 @@ function sendMessage() {
     }
 }
 
+function sendMessage() {
+    const input = document.getElementById('input');
+    const message = input.value.trim();
+
+    if (message) {
+        appendMessage('user', message);
+
+        // Проверяем, если пользователь отправил текст для поиска
+        if (currentFilterIndex === filterOrder.length) {
+            socket.emit('search', { query: message });
+        } else {
+            socket.emit('user-message', message); // Пример события для отправки сообщения
+        }
+
+        input.value = '';
+    }
+}
+
 // Начинаем диалог при загрузке страницы
 socket.emit('start');

@@ -239,5 +239,33 @@ def show_hats():
         emit("bot-message", "К сожалению, по вашим критериям ничего не найдено.")
 
 
+@socketio.on("search")
+def handle_search(data):
+    search_query = data["query"]
+
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    # SQL запрос для поиска товаров по названию
+    cursor.execute(
+        """
+        SELECT title
+        FROM hats
+        WHERE title ILIKE %s
+        """,
+        (f"%{search_query}%",),
+    )
+
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    if results:
+        for result in results:
+            emit("bot-message", f"Найдено: {result['title']}")
+    else:
+        emit("bot-message", "Ничего не найдено по вашему запросу.")
+
+
 if __name__ == "__main__":
     socketio.run(app, debug=True)
