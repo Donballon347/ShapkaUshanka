@@ -120,45 +120,6 @@ def start_conversation():
     emit("filter-options", filters["categories"])
 
 
-# @socketio.on("filter-selection")
-# def handle_filter_selection(data):
-#     filter_type = data["filter_type"]
-#     selection = data["selection"]
-
-#     user_filters[filter_type] = selection
-
-#     next_filter = None
-#     if filter_type == "categories":
-#         next_filter = "gender"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите пол.")
-#     elif filter_type == "gender":
-#         next_filter = "season"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите сезон.")
-#     elif filter_type == "season":
-#         next_filter = "ears"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите ушки.")
-#     elif filter_type == "ears":
-#         next_filter = "material"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите материал.")
-#     elif filter_type == "material":
-#         next_filter = "composition"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите состав.")
-#     elif filter_type == "composition":
-#         next_filter = "ties"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите наличые завязок.")
-#     elif filter_type == "ties":
-#         next_filter = "size"
-#         emit("bot-message", f"Вы выбрали {selection}. Теперь выберите размер.")
-#     elif filter_type == "size":
-#         emit("bot-message", "Вы выбрали все фильтры. Вот ваши варианты:")
-#         result = f"Модель 1. {user_filters['categories']}, {user_filters['gender']}, {user_filters['season']}, {user_filters['ears']}, {user_filters['material']}, {selection}"
-#         emit("bot-message", result)
-#         return
-
-#     if next_filter:
-#         emit("filter-options", filters[next_filter])
-
-
 @socketio.on("filter-selection")
 def handle_filter_selection(data):
     global page_number
@@ -241,19 +202,22 @@ def show_hats():
 
 @socketio.on("search")
 def handle_search(data):
+    global page_number
     search_query = data["query"]
+    page_number = 0  # Сбрасываем номер страницы при новом поисковом запросе
 
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-    # SQL запрос для поиска товаров по названию
+    # SQL запрос для поиска товаров по названию с лимитом и смещением для пагинации
     cursor.execute(
         """
         SELECT title
         FROM hats
         WHERE title ILIKE %s
+        LIMIT %s OFFSET %s
         """,
-        (f"%{search_query}%",),
+        (f"%{search_query}%", page_size, page_number * page_size),
     )
 
     results = cursor.fetchall()
@@ -263,8 +227,43 @@ def handle_search(data):
     if results:
         for result in results:
             emit("bot-message", f"Найдено: {result['title']}")
+        emit("bot-message", '<button onclick="showMoreSearch()">Показать еще</button>')
     else:
         emit("bot-message", "Ничего не найдено по вашему запросу.")
+
+
+@socketio.on("show-more-search")
+def show_more_search():
+    global page_number
+    page_number += 1
+
+    search_query = user_filters.get("search_query", "")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+
+    # SQL запрос для поиска товаров по названию с лимитом и смещением
+    cursor.execute(
+        """
+        SELECT title
+        FROM hats
+        WHERE title ILIKE %s
+        LIMIT %s OFFSET %s
+        """,
+        (f"%{search_query}%", page_size, page_number * page_size),
+    )
+
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    if results:
+        for result in results:
+            emit("bot-message", f"Найдено: {result['title']}")
+        emit("bot-message", '<button onclick="showMoreSearch()">Показать еще</button>')
+    else:
+        emit("bot-message", "Больше нет товаров.")
+
 
 
 if __name__ == "__main__":
