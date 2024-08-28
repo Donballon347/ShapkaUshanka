@@ -68,6 +68,10 @@ user_filters = {}
 page_number = 0
 page_size = 5
 
+def offer_return_to_selection():
+    emit("bot-message", "Хотите вернуться к выбору?")
+    emit("filter-options", ["Подобрать по фильтрам", "Найти товар по поиску"])
+
 
 @app.route("/")
 def index():
@@ -114,10 +118,8 @@ def get_filtered_hats(filters, offset=0, limit=5):
 @socketio.on("start")
 def start_conversation():
     user_filters.clear()
-    emit(
-        "bot-message", "Привет! Давайте подберем шапку. Для начала выберите категорию."
-    )
-    emit("filter-options", filters["categories"])
+    emit("bot-message", "Привет! Как вы хотите продолжить?")
+    emit("filter-options", ["Подобрать по фильтрам", "Найти товар по поиску"])
 
 
 @socketio.on("filter-selection")
@@ -125,6 +127,15 @@ def handle_filter_selection(data):
     global page_number
     filter_type = data["filter_type"]
     selection = data["selection"]
+
+    if selection == "Подобрать по фильтрам":
+        emit("bot-message", "Для начала выберите категорию.")
+        emit("filter-options", filters["categories"])
+        return
+
+    elif selection == "Найти товар по поиску":
+        emit("bot-message", "Введите название товара для поиска.")
+        return
 
     if filter_type == "show_more":
         page_number += 1
@@ -174,10 +185,12 @@ def handle_filter_selection(data):
             emit("bot-message", '<button onclick="showMore()">Показать еще</button>')
         else:
             emit("bot-message", "К сожалению, по вашим критериям ничего не найдено.")
+        offer_return_to_selection()
         return
 
     if next_filter:
         emit("filter-options", filters[next_filter])
+
 
 
 @socketio.on("show-more")
@@ -198,7 +211,7 @@ def show_hats():
         emit("bot-message", '<button onclick="showMore()">Показать еще</button>')
     else:
         emit("bot-message", "К сожалению, по вашим критериям ничего не найдено.")
-
+    offer_return_to_selection()
 
 @socketio.on("search")
 def handle_search(data):
@@ -230,7 +243,7 @@ def handle_search(data):
         emit("bot-message", '<button onclick="showMoreSearch()">Показать еще</button>')
     else:
         emit("bot-message", "Ничего не найдено по вашему запросу.")
-
+    offer_return_to_selection()
 
 @socketio.on("show-more-search")
 def show_more_search():
@@ -263,7 +276,7 @@ def show_more_search():
         emit("bot-message", '<button onclick="showMoreSearch()">Показать еще</button>')
     else:
         emit("bot-message", "Больше нет товаров.")
-
+    offer_return_to_selection()
 
 
 if __name__ == "__main__":
