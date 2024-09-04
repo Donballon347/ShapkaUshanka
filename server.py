@@ -180,28 +180,48 @@ def view_cart():
         emit("bot-message", "Ваша корзина пуста.")
 
 
-# Оформление заказа
+# Шаг 1: Обработчик события "checkout"
 @socketio.on("checkout")
 def checkout():
     cart = get_cart()
     if cart:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        try:
-            for item in cart:
-                cursor.execute("INSERT INTO orders (product_name) VALUES (%s)", (item,))
-            conn.commit()
-            clear_cart()
-            emit("bot-message", "Ваш заказ оформлен!")
-        except Exception as e:
-            conn.rollback()
-            emit("bot-message", "Ошибка при оформлении заказа. Попробуйте снова.")
-            print(f"Ошибка: {e}")
-        finally:
-            cursor.close()
-            conn.close()
+        emit("bot-message", "Введите номер телефона.")
+        emit("show-phone-input")  # Сигнал для отображения поля ввода номера телефона
     else:
         emit("bot-message", "Ваша корзина пуста. Невозможно оформить заказ.")
+
+
+# Шаг 2: Обработчик события "submit-phone"
+@socketio.on("submit-phone")
+def submit_phone(data):
+    phone_number = data.get("phone")
+    cart = get_cart()
+
+    if not phone_number or not cart:
+        emit("bot-message", "Ошибка. Номер телефона не введен или корзина пуста.")
+        return
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        for item in cart:
+            cursor.execute(
+                "INSERT INTO orders (product_name, phone) VALUES (%s, %s)",
+                (item, phone_number),
+            )
+        conn.commit()
+        clear_cart()
+        emit(
+            "bot-message",
+            "Спасибо, ваш заказ оформлен! Вам перезвонят в ближайшее время!",
+        )
+    except Exception as e:
+        conn.rollback()
+        emit("bot-message", "Ошибка при оформлении заказа. Попробуйте снова.")
+        print(f"Ошибка: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def get_filtered_hats(filters, offset=0, limit=5):

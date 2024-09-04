@@ -14,12 +14,14 @@
 </head>
 
 <body>
-    <div id="chat">
-
-    </div>
+    <div id="chat"></div>
     <div id="input-container" class="hidden">
         <input type="text" id="input" placeholder="Введите ваш запрос">
         <button onclick="sendMessage()">Отправить</button>
+    </div>
+    <div id="phone-input-container" class="hidden">
+        <input type="text" id="phone-input" placeholder="Введите ваш номер телефона">
+        <button onclick="sendPhoneNumber()">Отправить</button>
     </div>
     <button onclick="viewCart()">Посмотреть корзину</button>
     <button onclick="checkout()">Оформить заказ</button>

@@ -116,9 +116,23 @@ function viewCart() {
 }
 
 // Функция для оформления заказа
+// Шаг 1: Отправка события checkout
 function checkout() {
     socket.emit('checkout');
 }
+
+// Шаг 2: Отправка номера телефона
+function sendPhoneNumber() {
+    const phone = document.getElementById("phone-input").value;
+    socket.emit('submit-phone', { phone });
+    document.getElementById("phone-input").value = ""; // Очистка поля ввода после отправки
+    document.getElementById("phone-input-container").classList.add("hidden"); // Скрытие поля ввода
+}
+
+// Прослушивание события от сервера для отображения поля ввода
+socket.on('show-phone-input', () => {
+    document.getElementById("phone-input-container").classList.remove("hidden");
+});
 
 // Начинаем диалог при загрузке страницы
 socket.emit('start');
