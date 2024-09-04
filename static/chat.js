@@ -76,8 +76,6 @@ function appendMessage(sender, text) {
     chat.scrollTop = chat.scrollHeight;
 }
 
-
-
 // Функция для обработки нажатия на кнопку "Показать еще"
 function showMore() {
     socket.emit('show-more');
@@ -103,6 +101,21 @@ function sendMessage() {
 
         input.value = '';
     }
+}
+
+// Функция для добавления товара в корзину
+function addToCart(title) {
+    socket.emit('add-to-cart', { title });
+}
+
+// Функция для просмотра корзины
+function viewCart() {
+    socket.emit('view-cart');
+}
+
+// Функция для оформления заказа
+function checkout() {
+    socket.emit('checkout');
 }
 
 // Начинаем диалог при загрузке страницы

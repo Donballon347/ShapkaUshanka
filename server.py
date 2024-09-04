@@ -1,6 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 from flask_socketio import SocketIO, emit
-
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
@@ -68,9 +67,21 @@ user_filters = {}
 page_number = 0
 page_size = 5
 
+
 def offer_return_to_selection():
     emit("bot-message", "Хотите вернуться к выбору?")
     emit("filter-options", ["Подобрать по фильтрам", "Найти товар по поиску"])
+
+
+# Делаем корзину частью сессии пользователя
+def get_cart():
+    if 'cart' not in session:
+        session['cart'] = []
+    return session['cart']
+
+
+def clear_cart():
+    session["cart"] = []
 
 
 @app.route("/")
@@ -78,18 +89,66 @@ def index():
     return render_template("index.html")
 
 
+# Добавление товаров в корзину
+@socketio.on("add-to-cart")
+def add_to_cart(data):
+    cart = get_cart()
+    if "title" in data:
+        cart.append(data["title"])  # Добавление товара в корзину
+        session.modified = True
+        emit("bot-message", f"{data['title']} добавлен в корзину.")
+    else:
+        emit("bot-message", "Ошибка: Товар не указан.")
+
+
+# Просмотр содержимого корзины
+@socketio.on("view-cart")
+def view_cart():
+    cart = get_cart()
+    if cart:
+        emit("bot-message", "Ваши товары в корзине:")
+        for item in cart:
+            emit("bot-message", f"- {item}")
+    else:
+        emit("bot-message", "Ваша корзина пуста.")
+
+
+# Оформление заказа
+@socketio.on("checkout")
+def checkout():
+    cart = get_cart()
+    if cart:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            for item in cart:
+                cursor.execute("INSERT INTO orders (product_name) VALUES (%s)", (item,))
+            conn.commit()
+            clear_cart()
+            emit("bot-message", "Ваш заказ оформлен!")
+        except Exception as e:
+            conn.rollback()
+            emit("bot-message", "Ошибка при оформлении заказа. Попробуйте снова.")
+            print(f"Ошибка: {e}")
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        emit("bot-message", "Ваша корзина пуста. Невозможно оформить заказ.")
+
+
 def get_filtered_hats(filters, offset=0, limit=5):
     query = """
     SELECT title
     FROM hats
-    WHERE category = %s
-    AND sex = %s
-    AND season = %s
-    AND ears = %s
-    AND material = %s
-    AND composition = %s
-    AND ties = %s
-    AND size = %s
+    WHERE category ILIKE %s
+    AND sex ILIKE %s
+    AND season ILIKE %s
+    AND ears ILIKE %s
+    AND material ILIKE %s
+    AND composition ILIKE %s
+    AND ties ILIKE %s
+    AND size ILIKE %s
     LIMIT %s OFFSET %s
     """
     filter_values = (
@@ -192,7 +251,6 @@ def handle_filter_selection(data):
         emit("filter-options", filters[next_filter])
 
 
-
 @socketio.on("show-more")
 def show_more():
     global page_number
@@ -212,6 +270,7 @@ def show_hats():
     else:
         emit("bot-message", "К сожалению, по вашим критериям ничего не найдено.")
     offer_return_to_selection()
+
 
 @socketio.on("search")
 def handle_search(data):
@@ -244,6 +303,7 @@ def handle_search(data):
     else:
         emit("bot-message", "Ничего не найдено по вашему запросу.")
     offer_return_to_selection()
+
 
 @socketio.on("show-more-search")
 def show_more_search():
