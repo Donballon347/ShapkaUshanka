@@ -15,11 +15,13 @@ function appendMessage(sender, text) {
 }
 
 // Обработка сообщений от бота
+// В обработке 'bot-message', если есть идентификаторы товаров, они будут добавляться в сообщения:
 socket.on('bot-message', (message) => {
     const div = document.createElement('div');
     div.className = 'message bot';
-    div.innerHTML = message;
+    div.innerHTML = message; // Уже содержит кнопку
     chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;  // Прокрутка вниз
 });
 
 // Обработка кнопок с опциями фильтров
@@ -104,8 +106,8 @@ function sendMessage() {
 }
 
 // Функция для добавления товара в корзину
-function addToCart(title) {
-    socket.emit('add-to-cart', { title });
+function addToCart(id_hat) {
+    socket.emit('add-to-cart', { id_hat });
 }
 
 // Функция для просмотра корзины

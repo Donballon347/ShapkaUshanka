@@ -75,9 +75,9 @@ def offer_return_to_selection():
 
 # Делаем корзину частью сессии пользователя
 def get_cart():
-    if 'cart' not in session:
-        session['cart'] = []
-    return session['cart']
+    if "cart" not in session:
+        session["cart"] = []
+    return session["cart"]
 
 
 def clear_cart():
@@ -139,7 +139,7 @@ def checkout():
 
 def get_filtered_hats(filters, offset=0, limit=5):
     query = """
-    SELECT title
+    SELECT id_hat, title
     FROM hats
     WHERE category ILIKE %s
     AND sex ILIKE %s
@@ -164,12 +164,16 @@ def get_filtered_hats(filters, offset=0, limit=5):
         offset,
     )
 
+    print("Выполняется запрос с фильтрами:", filter_values)  # Отладочное сообщение
+
     conn = get_db_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     cursor.execute(query, filter_values)
     hats = cursor.fetchall()
     cursor.close()
     conn.close()
+
+    print("Результаты запроса:", hats)  # Отладочное сообщение
 
     return hats
 
@@ -203,7 +207,11 @@ def handle_filter_selection(data):
         )
         if hats:
             for hat in hats:
-                emit("bot-message", f"Модель: {hat['title']}")
+                # emit("bot-message", f"Модель: {hat['title']}")
+                emit(
+                    "bot-message",
+                    f"Модель: {hat['title']} <button onclick=\"addToCart({hat['id_hat']})\">Добавить в корзину</button>",
+                )
             emit("bot-message", '<button onclick="showMore()">Показать еще</button>')
         else:
             emit("bot-message", "Больше нет товаров.")
@@ -240,7 +248,11 @@ def handle_filter_selection(data):
         )
         if hats:
             for hat in hats:
-                emit("bot-message", f"Модель: {hat['title']}")
+                # emit("bot-message", f"Модель: {hat['title']}")
+                emit(
+                    "bot-message",
+                    f"Модель: {hat['title']} <button onclick=\"addToCart({hat['id_hat']})\">Добавить в корзину</button>",
+                )
             emit("bot-message", '<button onclick="showMore()">Показать еще</button>')
         else:
             emit("bot-message", "К сожалению, по вашим критериям ничего не найдено.")
@@ -265,7 +277,11 @@ def show_hats():
     )
     if hats:
         for hat in hats:
-            emit("bot-message", f"Модель: {hat['title']}")
+            # emit("bot-message", f"Модель: {hat['title']}")
+            emit(
+                "bot-message",
+                f"Модель: {hat['title']} <button onclick=\"addToCart({hat['id_hat']})\">Добавить в корзину</button>",
+            )
         emit("bot-message", '<button onclick="showMore()">Показать еще</button>')
     else:
         emit("bot-message", "К сожалению, по вашим критериям ничего не найдено.")
@@ -284,7 +300,7 @@ def handle_search(data):
     # SQL запрос для поиска товаров по названию с лимитом и смещением для пагинации
     cursor.execute(
         """
-        SELECT title
+        SELECT id_hat, title
         FROM hats
         WHERE title ILIKE %s
         LIMIT %s OFFSET %s
@@ -298,7 +314,11 @@ def handle_search(data):
 
     if results:
         for result in results:
-            emit("bot-message", f"Найдено: {result['title']}")
+            # emit("bot-message", f"Найдено: {result['title']}")
+            emit(
+                "bot-message",
+                f"Модель: {result['title']} <button onclick=\"addToCart({result['id_hat']})\">Добавить в корзину</button>",
+            )
         emit("bot-message", '<button onclick="showMoreSearch()">Показать еще</button>')
     else:
         emit("bot-message", "Ничего не найдено по вашему запросу.")
@@ -318,7 +338,7 @@ def show_more_search():
     # SQL запрос для поиска товаров по названию с лимитом и смещением
     cursor.execute(
         """
-        SELECT title
+        SELECT id_hat, title
         FROM hats
         WHERE title ILIKE %s
         LIMIT %s OFFSET %s
@@ -332,7 +352,11 @@ def show_more_search():
 
     if results:
         for result in results:
-            emit("bot-message", f"Найдено: {result['title']}")
+            # emit("bot-message", f"Найдено: {result['title']}")
+            emit(
+                "bot-message",
+                f"Модель: {result['title']} <button onclick=\"addToCart({result['id_hat']})\">Добавить в корзину</button>",
+            )
         emit("bot-message", '<button onclick="showMoreSearch()">Показать еще</button>')
     else:
         emit("bot-message", "Больше нет товаров.")
