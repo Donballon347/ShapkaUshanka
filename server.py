@@ -89,26 +89,93 @@ def index():
     return render_template("index.html")
 
 
-# Добавление товаров в корзину
+# # Добавление товаров в корзину
+# @socketio.on("add-to-cart")
+# def add_to_cart(data):
+#     cart = get_cart()
+#     if "id_hat" in data:
+#         cart.append(data["id_hat"])  # Добавление товара в корзину
+#         session.modified = True
+#         emit("bot-message", f"{data['id_hat']} добавлен в корзину.")
+#     else:
+#         emit("bot-message", "Ошибка: Товар не указан.")
+
+
 @socketio.on("add-to-cart")
 def add_to_cart(data):
     cart = get_cart()
-    if "title" in data:
-        cart.append(data["title"])  # Добавление товара в корзину
-        session.modified = True
-        emit("bot-message", f"{data['title']} добавлен в корзину.")
+    if "id_hat" in data:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            # Получаем title товара по id_hat из базы данных
+            cursor.execute(
+                "SELECT title FROM hats WHERE id_hat = %s", (data["id_hat"],)
+            )
+            result = cursor.fetchone()
+
+            if result:
+                title = result[0]  # Извлекаем title из результата запроса
+                cart.append(data["id_hat"])  # Добавляем id_hat в корзину
+                session.modified = True
+                # Отправляем сообщение с названием и идентификатором товара
+                emit(
+                    "bot-message",
+                    f'"{title}" добавлена в корзину. Id - {data["id_hat"]}.',
+                )
+            else:
+                emit("bot-message", "Ошибка: Товар не найден.")
+        except Exception as e:
+            emit("bot-message", "Ошибка при добавлении товара в корзину.")
+            print(f"Ошибка: {e}")
+        finally:
+            cursor.close()
+            conn.close()
     else:
         emit("bot-message", "Ошибка: Товар не указан.")
 
 
-# Просмотр содержимого корзины
+# # Просмотр содержимого корзины
+# @socketio.on("view-cart")
+# def view_cart():
+#     cart = get_cart()
+#     if cart:
+#         emit("bot-message", "Ваши товары в корзине:")
+#         for item in cart:
+#             emit("bot-message", f"- {item}")
+#     else:
+#         emit("bot-message", "Ваша корзина пуста.")
+
+
 @socketio.on("view-cart")
 def view_cart():
     cart = get_cart()
     if cart:
-        emit("bot-message", "Ваши товары в корзине:")
-        for item in cart:
-            emit("bot-message", f"- {item}")
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            emit("bot-message", "Ваши товары в корзине:")
+            for id_hat in cart:
+                # Получаем title товара по id_hat из базы данных
+                cursor.execute("SELECT title FROM hats WHERE id_hat = %s", (id_hat,))
+                result = cursor.fetchone()
+
+                if result:
+                    title = result[0]  # Извлекаем title из результата запроса
+                    emit(
+                        "bot-message",
+                        f'Шапка "{title}" добавлен в корзину. Id - {id_hat}.',
+                    )
+                else:
+                    emit("bot-message", f"Товар с Id - {id_hat} не найден.")
+        except Exception as e:
+            emit("bot-message", "Ошибка при получении содержимого корзины.")
+            print(f"Ошибка: {e}")
+        finally:
+            cursor.close()
+            conn.close()
     else:
         emit("bot-message", "Ваша корзина пуста.")
 
