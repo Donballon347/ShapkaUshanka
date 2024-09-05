@@ -1,81 +1,211 @@
-/* Стили для контейнера чата */
+.cart {
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 6em
+}
+
+/* Основные стили */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Контейнер чата */
+#chat-container {
+    width: 400px;
+    height: 600px;
+    background-color: #fff;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Заголовок */
+#header {
+    background-color: #FF6100;
+    /* Главный цвет */
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Контейнер для сообщений */
 #chat {
-    width: 100%;
-    max-width: 500px;
-    height: 700px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin: 20px auto;
-    overflow-y: scroll;
-    background-color: #f9f9f9;
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background-color: #f7f9fc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.5s ease-in-out;
+    max-height: 600px;
 }
 
 /* Стили для сообщений */
 .message {
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 10px 15px;
+    border-radius: 15px;
     max-width: 80%;
+    word-wrap: break-word;
+    animation: slideIn 0.3s ease;
 }
 
-/* Стили для сообщений пользователя */
-.user {
-    background-color: #d1e7ff;
-    color: #0a58ca;
-    text-align: right;
-    margin-left: auto;
+/* Сообщения пользователя */
+.message.user {
+    align-self: flex-end;
+    background-color: #FF6100;
+    /* Главный цвет */
+    color: #fff;
+    border-radius: 15px 15px 0px 15px;
 }
 
-/* Стили для сообщений бота */
-.bot {
-    background-color: #e2e3e5;
-    color: #495057;
-    text-align: left;
-    margin-right: auto;
+/* Сообщения бота */
+.message.bot {
+    align-self: flex-start;
+    background-color: #e2e8f0;
+    color: #333;
+    border-radius: 15px 15px 15px 0px;
 }
 
-/* Стили для кнопки отправки */
-button {
-    display: block;
-    width: 100%;
-    max-width: 100px;
-    margin: 10px auto;
+/* Строка ввода */
+#input-container {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
     padding: 10px;
-    background-color: #007bff;
+    display: flex;
+    gap: 10px;
+    border-radius: 0 0 15px 15px;
+}
+
+/* Поле ввода текста */
+#input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+#input:focus {
+    border-color: #FF6100;
+    /* Главный цвет */
+}
+
+/* Кнопка отправки */
+#send-button {
+    background-color: #FF6100;
+    /* Главный цвет */
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#send-button:hover {
+    background-color: #e85400;
+}
+
+#send-button:active {
+    background-color: #c04800;
+}
+
+/* Кнопки фильтров */
+button {
+    padding: 8px 12px;
+    margin: 5px 0;
+    background-color: #3EB4E3;
+    /* Дополнительный цвет */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #34a0d1;
 }
 
-/* Стили для поля ввода */
-#input-container {
-    width: 20%;
-    /* Ширина контейнера поля ввода */
-    margin: 0 auto;
-    /* Центрирование по горизонтали */
-    flex-direction: column;
-    align-items: center;
+button:active {
+    background-color: #2a8bbd;
 }
 
-input[type="text"] {
-    width: 100%;
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#phone-input {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
     padding: 10px;
-    margin: 10px 0;
+    display: flex;
+    gap: 10px;
+    border-radius: 0 0 15px 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    margin-left: auto;
+    margin-right: auto;
+    width: 190px;
 }
 
-/* Стили для поля ввода */
+/* Скрытый блок ввода телефона */
+#phone-input-container.hidden {
+    display: none;
+}
+
 #phone-input-container {
-    width: 20%;
-    /* Ширина контейнера поля ввода */
-    margin: 0 auto;
-    /* Центрирование по горизонтали */
-    flex-direction: column;
-    align-items: center;
+    padding: 10px;
+    gap: 10px;
+}
+
+.send-phone-number-button {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+
+/* Корзина */
+.cart {
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 6em;
 }

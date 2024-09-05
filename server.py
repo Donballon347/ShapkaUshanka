@@ -309,25 +309,25 @@ def handle_filter_selection(data):
     next_filter = None
     if filter_type == "categories":
         next_filter = "gender"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите пол.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите пол.")
     elif filter_type == "gender":
         next_filter = "season"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите сезон.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите сезон.")
     elif filter_type == "season":
         next_filter = "ears"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите ушки.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите ушки.")
     elif filter_type == "ears":
         next_filter = "material"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите материал.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите материал.")
     elif filter_type == "material":
         next_filter = "composition"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите состав.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите состав.")
     elif filter_type == "composition":
         next_filter = "ties"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите наличие завязок.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите наличие завязок.")
     elif filter_type == "ties":
         next_filter = "size"
-        emit("bot-message", f"Вы выбрали {selection}. Теперь выберите размер.")
+        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите размер.")
     elif filter_type == "size":
         emit("bot-message", "Вы выбрали все фильтры. Вот ваши варианты:")
         hats = get_filtered_hats(
