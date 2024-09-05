@@ -209,3 +209,10 @@ button:active {
     margin-right: auto;
     width: 6em;
 }
+
+.logo {
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    /* align-items: center; Центрирование по вертикали */
+    margin-bottom: 50px;
+}
