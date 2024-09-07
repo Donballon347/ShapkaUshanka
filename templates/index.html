@@ -16,8 +16,7 @@
 <body>
     <div class="full_screen">
         <div class="logo">
-            <a href="https://www.shapka-ushanka.ru/" target="_blank"><img
-                    src="https://www.shapka-ushanka.ru/images/logos-.png" alt="logo"></a>
+            <a href="https://www.shapka-ushanka.ru/" target="_blank"><img src="static/images/logo.png" alt="logo"></a>
         </div>
         <div id="chat"></div>
         <div class="lower">
@@ -26,7 +25,11 @@
                 <button onclick="sendMessage()">Отправить</button>
             </div>
             <div id="phone-input-container" class="hidden">
-                <input type="text" id="phone-input" placeholder="Введите ваш номер телефона">
+                <!-- <input type="text" id="phone-input" placeholder="Введите ваш номер телефона">
+                <button class="send-phone-number-button" onclick="sendPhoneNumber()">Отправить</button> -->
+                <label for="phone-input">Введите номер телефона:</label>
+                <input type="tel" id="phone-input" placeholder="8 495 777 22 88" maxlength="15"
+                    oninput="formatPhoneNumber(this)">
                 <button class="send-phone-number-button" onclick="sendPhoneNumber()">Отправить</button>
             </div>
             <div class="cart">

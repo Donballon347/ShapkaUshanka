@@ -170,11 +170,10 @@ button:active {
     }
 }
 
-#phone-input {
+#phone-input{
     background-color: #fff;
     border-top: 1px solid #ccc;
     padding: 10px;
-    display: flex;
     gap: 10px;
     border-radius: 0 0 15px 15px;
     border: 1px solid #ccc;
@@ -194,12 +193,6 @@ button:active {
 #phone-input-container {
     padding: 10px;
     gap: 10px;
-}
-
-.send-phone-number-button {
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
 }
 
 /* Корзина */

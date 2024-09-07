@@ -134,5 +134,25 @@ socket.on('show-phone-input', () => {
     document.getElementById("phone-input-container").classList.remove("hidden");
 });
 
+function formatPhoneNumber(input) {
+    // Удаляем все символы, кроме цифр
+    let value = input.value.replace(/\D/g, '');
+
+    // Форматируем номер
+    if (value.length <= 1) {
+        input.value = value;
+    } else if (value.length <= 4) {
+        input.value = value.slice(0, 1) + ' ' + value.slice(1);
+    } else if (value.length <= 7) {
+        input.value = value.slice(0, 1) + ' ' + value.slice(1, 4) + ' ' + value.slice(4);
+    } else if (value.length <= 9) {
+        input.value = value.slice(0, 1) + ' ' + value.slice(1, 4) + ' ' + value.slice(4, 7) + ' ' + value.slice(7);
+    } else {
+        input.value = value.slice(0, 1) + ' ' + value.slice(1, 4) + ' ' + value.slice(4, 7) + ' ' + value.slice(7, 9) + ' ' + value.slice(9);
+    }
+}
+
 // Начинаем диалог при загрузке страницы
 socket.emit('start');
+
+

@@ -89,18 +89,6 @@ def index():
     return render_template("index.html")
 
 
-# # Добавление товаров в корзину
-# @socketio.on("add-to-cart")
-# def add_to_cart(data):
-#     cart = get_cart()
-#     if "id_hat" in data:
-#         cart.append(data["id_hat"])  # Добавление товара в корзину
-#         session.modified = True
-#         emit("bot-message", f"{data['id_hat']} добавлен в корзину.")
-#     else:
-#         emit("bot-message", "Ошибка: Товар не указан.")
-
-
 @socketio.on("add-to-cart")
 def add_to_cart(data):
     cart = get_cart()
@@ -134,18 +122,6 @@ def add_to_cart(data):
             conn.close()
     else:
         emit("bot-message", "Ошибка: Товар не указан.")
-
-
-# # Просмотр содержимого корзины
-# @socketio.on("view-cart")
-# def view_cart():
-#     cart = get_cart()
-#     if cart:
-#         emit("bot-message", "Ваши товары в корзине:")
-#         for item in cart:
-#             emit("bot-message", f"- {item}")
-#     else:
-#         emit("bot-message", "Ваша корзина пуста.")
 
 
 @socketio.on("view-cart")
@@ -324,7 +300,9 @@ def handle_filter_selection(data):
         emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите состав.")
     elif filter_type == "composition":
         next_filter = "ties"
-        emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите наличие завязок.")
+        emit(
+            "bot-message", f"Вы выбрали '{selection}'. Теперь выберите наличие завязок."
+        )
     elif filter_type == "ties":
         next_filter = "size"
         emit("bot-message", f"Вы выбрали '{selection}'. Теперь выберите размер.")
