@@ -6,8 +6,8 @@ from psycopg2.extras import RealDictCursor
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host="localhost",  # Хост вашей базы данных
-        database="shopdb",  # Название вашей базы данных
+        host="localhost",  # Хост базы данных
+        database="shopdb",  # Название базы данных
         user="postgres",  # Имя пользователя базы данных
         password="1337",  # Пароль пользователя базы данных
     )
@@ -270,7 +270,6 @@ def handle_filter_selection(data):
         )
         if hats:
             for hat in hats:
-                # emit("bot-message", f"Модель: {hat['title']}")
                 emit(
                     "bot-message",
                     f"Модель: {hat['title']} <button onclick=\"addToCart({hat['id_hat']})\">Добавить в корзину</button>",
@@ -313,7 +312,6 @@ def handle_filter_selection(data):
         )
         if hats:
             for hat in hats:
-                # emit("bot-message", f"Модель: {hat['title']}")
                 emit(
                     "bot-message",
                     f"Модель: {hat['title']} <button onclick=\"addToCart({hat['id_hat']})\">Добавить в корзину</button>",
@@ -342,7 +340,6 @@ def show_hats():
     )
     if hats:
         for hat in hats:
-            # emit("bot-message", f"Модель: {hat['title']}")
             emit(
                 "bot-message",
                 f"Модель: {hat['title']} <button onclick=\"addToCart({hat['id_hat']})\">Добавить в корзину</button>",
@@ -379,7 +376,6 @@ def handle_search(data):
 
     if results:
         for result in results:
-            # emit("bot-message", f"Найдено: {result['title']}")
             emit(
                 "bot-message",
                 f"Модель: {result['title']} <button onclick=\"addToCart({result['id_hat']})\">Добавить в корзину</button>",
@@ -417,7 +413,6 @@ def show_more_search():
 
     if results:
         for result in results:
-            # emit("bot-message", f"Найдено: {result['title']}")
             emit(
                 "bot-message",
                 f"Модель: {result['title']} <button onclick=\"addToCart({result['id_hat']})\">Добавить в корзину</button>",

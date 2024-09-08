@@ -15,7 +15,7 @@ function appendMessage(sender, text) {
 }
 
 // Обработка сообщений от бота
-// В обработке 'bot-message', если есть идентификаторы товаров, они будут добавляться в сообщения:
+// В обработке 'bot-message', если есть идентификаторы товаров, они будут добавляться в сообщения
 socket.on('bot-message', (message) => {
     const div = document.createElement('div');
     div.className = 'message bot';
